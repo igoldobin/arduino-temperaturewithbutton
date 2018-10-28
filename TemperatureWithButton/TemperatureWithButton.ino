@@ -24,7 +24,7 @@ void setup() {
 }
 
 void loop() {
-  if (millis() - check_time > 5000) {
+  if (millis() - check_time > 5000 && millis() > check_time) {
   check_time = millis();
   is.reset(); es.reset();
   is.write(0xCC, 0); es.write(0xCC, 0);
@@ -37,7 +37,7 @@ void loop() {
 
   temp_int =  (float)((int)data_int[0] | (((int)data_int[1]) << 8)) * 0.0625 + 0.03125;
   temp_ext =  (float)((int)data_ext[0] | (((int)data_ext[1]) << 8)) * 0.0625 + 0.03125;
-  }
+  } else if (millis() < check_time) {check_time = millis();}
   
   buttonPress = digitalRead(buttonPin);
   delay(100);
