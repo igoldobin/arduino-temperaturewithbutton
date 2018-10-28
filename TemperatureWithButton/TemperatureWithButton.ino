@@ -13,27 +13,34 @@ byte data_int[9], data_ext[9], i;
 float temp_int, temp_ext;
 boolean buttonPress = 0;
 int buttonState = 0;
+unsigned long check_time =0;
 
 void setup() {
   lcd.init(); lcd.backlight(); lcd.createChar(1, grad);
   pinMode(buttonPin, INPUT);
+  lcd.setCursor(1,0);lcd.print("    ARDUINO     ");
+  lcd.setCursor(1,1);lcd.print("  TEMPERATURE   ");
+  delay(5000);
 }
 
 void loop() {
+  if (millis() - check_time > 5000) {
+  check_time = millis();
   is.reset(); es.reset();
   is.write(0xCC, 0); es.write(0xCC, 0);
   is.write(0x44, 0); es.write(0x44, 0);
-    delay(1000);
+  delay(100);
   is.reset(); es.reset();
   is.write(0xCC, 0); es.write(0xCC, 0);
   is.write(0xBE, 0); es.write(0xBE, 0);
   is.read_bytes(data_int, 9); es.read_bytes(data_ext, 9);
 
-  buttonPress = digitalRead(buttonPin);
-
   temp_int =  (float)((int)data_int[0] | (((int)data_int[1]) << 8)) * 0.0625 + 0.03125;
   temp_ext =  (float)((int)data_ext[0] | (((int)data_ext[1]) << 8)) * 0.0625 + 0.03125;
-
+  }
+  
+  buttonPress = digitalRead(buttonPin);
+  delay(100);
 
 if (buttonState == 0 && buttonPress == 0) {
   lcd.setCursor(1,0);
